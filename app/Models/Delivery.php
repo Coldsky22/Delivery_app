@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Observer;
 class Delivery extends Model
 {
     use HasFactory;
@@ -26,5 +27,18 @@ class Delivery extends Model
         }
 
         return $delivery;
+    }
+
+    private $observers = [];
+
+    public function attach(Observer $observer) {
+        $this->observers[] = $observer;
+    }
+
+    public $action;
+    public function notify() {
+        foreach ($this->observers as $observer) {
+            $observer->update($this);
+        }
     }
 }
