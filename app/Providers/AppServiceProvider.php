@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use App\Observers\DeliveryObserver;
+use App\Models\Delivery;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -24,5 +27,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
+        Delivery::observe(DeliveryObserver::class);
     }
 }

@@ -9,16 +9,9 @@ use App\Models\Delivery;
 use App\Http\Resources\DeliveryResource;
 use App\Http\Requests\CreateDeliveryRequest;
 use App\Http\Requests\UpdateDeliveryRequest;
-use App\Http\TelegramNotifier;
 
 class DeliveryController extends Controller
 {
-    private function notifyWithTelegram(Delivery $delivery, $action) {
-        $delivery->attach(new TelegramNotifier());
-        $delivery->action = $action;
-        $delivery->notify();
-    }
-
     // Конструктор контроллера. Устанавливает промежуточное ПО "auth"
     // только на методы "store", "update" и "destroy".
     public function __construct()
@@ -63,8 +56,6 @@ class DeliveryController extends Controller
 
         $delivery = Delivery::create($data);
 
-        $this->notifyWithTelegram($delivery, 'create');
-
         return new DeliveryResource($delivery);
     }
 
@@ -88,8 +79,6 @@ class DeliveryController extends Controller
 
         $delivery->update($data);
 
-        $this->notifyWithTelegram($delivery, 'update');
-
         return new DeliveryResource($delivery);
     }
 
@@ -103,8 +92,6 @@ class DeliveryController extends Controller
         }
 
         $delivery->delete();
-
-        $this->notifyWithTelegram($delivery, 'delete');
 
         return response()->json(['message' => 'Delivery deleted successfully']);
     }
